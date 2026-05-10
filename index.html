@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Below Deck Countdown</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Montserrat:wght@300;400;600&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0a1628;
+      --deep-navy: #060e1a;
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --cream: #f5f0e8;
+      --white: #ffffff;
+      --ocean1: #0d2137;
+      --ocean2: #1a3a5c;
+      --ocean3: #0e4d72;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--deep-navy);
+      font-family: 'Montserrat', sans-serif;
+      color: var(--cream);
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* ── Stars ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--d, 3s) ease-in-out infinite alternate;
+      opacity: var(--o, 0.6);
+    }
+    @keyframes twinkle {
+      from { opacity: var(--o, 0.6); transform: scale(1); }
+      to   { opacity: calc(var(--o, 0.6) * 0.3); transform: scale(0.7); }
+    }
+
+    /* ── Ocean waves ── */
+    .ocean {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 220px;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 200%;
+      height: 100%;
+    }
+    .wave svg { width: 100%; height: 100%; }
+
+    .wave1 { animation: waveMove 8s linear infinite; opacity: 0.7; }
+    .wave2 { animation: waveMove 12s linear infinite reverse; opacity: 0.5; bottom: -10px; }
+    .wave3 { animation: waveMove 16s linear infinite; opacity: 0.35; bottom: -20px; }
+
+    @keyframes waveMove {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ── Main layout ── */
+    .container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 2rem 1.5rem 260px;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* ── Rope divider ── */
+    .rope {
+      width: 100%;
+      height: 12px;
+      background: repeating-linear-gradient(
+        90deg,
+        var(--gold) 0px, var(--gold) 6px,
+        var(--gold-light) 6px, var(--gold-light) 12px
+      );
+      border-radius: 6px;
+      margin: 1.2rem auto;
+      max-width: 500px;
+      opacity: 0.7;
+    }
+
+    /* ── Anchor icon ── */
+    .anchor-wrap {
+      margin-bottom: 0.5rem;
+    }
+    .anchor-icon {
+      font-size: 3.5rem;
+      filter: drop-shadow(0 0 14px var(--gold));
+      animation: bob 4s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── Header text ── */
+    .eyebrow {
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 7vw, 5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), #a0742a);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      font-size: clamp(0.85rem, 2.2vw, 1.1rem);
+      letter-spacing: 0.15em;
+      color: rgba(245,240,232,0.7);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Countdown blocks ── */
+    .countdown {
+      display: flex;
+      gap: clamp(0.8rem, 3vw, 2rem);
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+
+    .unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .digit-box {
+      background: linear-gradient(160deg, var(--ocean2), var(--ocean1));
+      border: 1px solid rgba(201,168,76,0.4);
+      border-radius: 12px;
+      padding: clamp(0.9rem, 3vw, 1.6rem) clamp(1rem, 3.5vw, 2rem);
+      min-width: clamp(80px, 16vw, 130px);
+      position: relative;
+      box-shadow:
+        0 0 0 1px rgba(201,168,76,0.15),
+        0 8px 32px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .digit-box::after {
+      content: '';
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 50%;
+      height: 1px;
+      background: rgba(201,168,76,0.25);
+    }
+
+    .digit {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+      text-shadow: 0 0 20px rgba(201,168,76,0.5);
+      display: block;
+      min-width: 2ch;
+      text-align: center;
+    }
+
+    .label {
+      font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .sep {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      color: var(--gold);
+      align-self: center;
+      margin-top: -1.2rem;
+      opacity: 0.6;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0.6; }
+      50%       { opacity: 0.1; }
+    }
+
+    /* ── Tagline ── */
+    .tagline {
+      font-size: clamp(0.8rem, 2vw, 1rem);
+      letter-spacing: 0.1em;
+      color: rgba(245,240,232,0.5);
+      margin-top: 1.2rem;
+      font-style: italic;
+    }
+    .tagline strong {
+      color: var(--gold-light);
+      font-style: normal;
+    }
+
+    /* ── Expired message ── */
+    #expired {
+      display: none;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      color: var(--gold-light);
+      text-shadow: 0 0 30px var(--gold);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.6; }
+    }
+
+    /* ── Boat ── */
+    .boat-wrap {
+      position: fixed;
+      bottom: 130px;
+      left: -120px;
+      z-index: 5;
+      animation: sail 30s linear infinite;
+    }
+    @keyframes sail {
+      0%   { left: -120px; }
+      100% { left: calc(100% + 20px); }
+    }
+    .boat-icon { font-size: 3.5rem; filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.6)); }
+
+    /* ── Responsive tweaks ── */
+    @media (max-width: 480px) {
+      .sep { display: none; }
+      .countdown { gap: 0.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Stars -->
+  <div class="stars" id="stars"></div>
+
+  <!-- Sailing boat -->
+  <div class="boat-wrap">
+    <span class="boat-icon">⛵</span>
+  </div>
+
+  <!-- Main content -->
+  <div class="container">
+    <div class="anchor-wrap">
+      <span class="anchor-icon">⚓</span>
+    </div>
+
+    <p class="eyebrow">All Hands on Deck</p>
+
+    <h1>Below Deck<br>Countdown</h1>
+
+    <p class="subtitle">Captain's orders — doors open at 9 PM EST</p>
+
+    <div class="rope"></div>
+
+    <div class="countdown" id="countdown">
+      <div class="unit">
+        <div class="digit-box">
+          <span class="digit" id="hours">00</span>
+        </div>
+        <span class="label">Hours</span>
+      </div>
+      <span class="sep">:</span>
+      <div class="unit">
+        <div class="digit-box">
+          <span class="digit" id="minutes">00</span>
+        </div>
+        <span class="label">Minutes</span>
+      </div>
+      <span class="sep">:</span>
+      <div class="unit">
+        <div class="digit-box">
+          <span class="digit" id="seconds">00</span>
+        </div>
+        <span class="label">Seconds</span>
+      </div>
+    </div>
+
+    <p id="expired">🥂 Welcome Aboard! 🥂</p>
+
+    <p class="tagline">
+      Tonight's charter begins at <strong>9&nbsp;PM&nbsp;Eastern</strong> —<br>
+      all crew report to the main deck
+    </p>
+
+    <div class="rope"></div>
+  </div>
+
+  <!-- Ocean waves -->
+  <div class="ocean">
+    <div class="wave wave1">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#1a3a5c" d="M0,80 C180,140 360,20 540,80 C720,140 900,20 1080,80 C1260,140 1440,60 1440,80 L1440,200 L0,200 Z"/>
+      </svg>
+    </div>
+    <div class="wave wave2">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#0d2137" d="M0,100 C200,40 400,160 600,100 C800,40 1000,160 1200,100 C1320,70 1400,110 1440,100 L1440,200 L0,200 Z"/>
+      </svg>
+    </div>
+    <div class="wave wave3">
+      <svg viewBox="0 0 1440 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#060e1a" d="M0,120 C240,60 480,180 720,120 C960,60 1200,180 1440,120 L1440,200 L0,200 Z"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    // ── Stars ──────────────────────────────────────────────────
+    (function () {
+      const container = document.getElementById('stars');
+      for (let i = 0; i < 160; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const size = Math.random() * 2.5 + 0.5;
+        s.style.cssText = `
+          width:${size}px; height:${size}px;
+          top:${Math.random() * 65}%;
+          left:${Math.random() * 100}%;
+          --d:${(Math.random() * 4 + 2).toFixed(1)}s;
+          --o:${(Math.random() * 0.5 + 0.3).toFixed(2)};
+          animation-delay:${(Math.random() * 5).toFixed(1)}s;
+        `;
+        container.appendChild(s);
+      }
+    })();
+
+    // ── Countdown ──────────────────────────────────────────────
+    // Target: May 10 2026 at 21:00 EST (UTC-5)
+    const TARGET = new Date('2026-05-10T21:00:00-05:00').getTime();
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function tick() {
+      const now  = Date.now();
+      const diff = TARGET - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdown').style.display = 'none';
+        document.getElementById('expired').style.display  = 'block';
+        return;
+      }
+
+      const totalSecs = Math.floor(diff / 1000);
+      const secs  = totalSecs % 60;
+      const mins  = Math.floor(totalSecs / 60) % 60;
+      const hours = Math.floor(totalSecs / 3600);
+
+      document.getElementById('hours').textContent   = pad(hours);
+      document.getElementById('minutes').textContent = pad(mins);
+      document.getElementById('seconds').textContent = pad(secs);
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
